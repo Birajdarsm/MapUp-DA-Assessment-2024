@@ -1,0 +1,261 @@
+import re
+import pandas as pd
+import polyline
+from geopy.distance import geodesic
+import math
+import numpy as np
+
+
+
+# 1. Reverse List By N Element
+
+def reverse_by_n_elements(lst, n):
+    result = []
+    temp = []
+
+    for i in range(len(lst)):
+        temp.append(lst[i])
+        if len(temp) == n:
+            for j in range(n - 1, -1, -1):
+                result.append(temp[j])
+            temp = []
+
+    for j in range(len(temp) - 1, -1, -1):
+        result.append(temp[j])
+
+    return result
+
+print(reverse_by_n_elements([1,2,3,4,5,6,7,8],3))
+print(reverse_by_n_elements([1,2,3,4,5],2))
+print(reverse_by_n_elements([10,20,30,40,50,60,70],4))
+
+# 2. Lists ands Dictionaries
+
+# def group_strings_by_length(strings):
+#     result = {}
+#
+#     for string in strings:
+#         length = len(string)
+#
+#         if length not in result:
+#             result[length] = []
+#
+#         result[length].append(string)
+#
+#     return dict(sorted(result.items()))
+#
+# print(group_strings_by_length(["apple","bat","car","elephant","dog","bear"]))
+# print(group_strings_by_length(["one","two","three","four"]))
+
+# 3. Flatten and nested Dictionary
+
+# input_dict = {
+#     "road": {
+#         "name": "Highway 1",
+#         "length": 350,
+#         "sections": [
+#             {
+#                 "id": 1,
+#                 "condition": {
+#                     "pavement": "good",
+#                     "traffic": "moderate"
+#                 }
+#             }
+#         ]
+#     }
+# }
+#
+# def flatten_dict(d, parent_key=''):
+#     items = {}
+#
+#     for k, v in d.items():
+#         new_key = parent_key + '.' + str(k) if parent_key else str(k)
+#
+#         if isinstance(v, dict):
+#             items.update(flatten_dict(v, new_key))
+#
+#         elif isinstance(v, list):
+#             for i, item in enumerate(v):
+#                 items.update(flatten_dict({f'{new_key}[{i}]': item}, ''))
+#
+#         else:
+#             items[new_key] = v
+#
+#     return items
+#
+# flattened_dict = flatten_dict(input_dict)
+#
+# for k, v in flattened_dict.items():
+#     print(f"{k}: {v}")
+
+
+# 4. Generate Unique Permutations
+
+# def unique_permutations(nums):
+#     def backtrack(start, end):
+#         if start == end:
+#             result.append(nums[:])
+#             return
+#
+#         seen = set()
+#         for i in range(start, end):
+#             if nums[i] not in seen:
+#                 seen.add(nums[i])
+#                 nums[start], nums[i] = nums[i], nums[start]
+#                 backtrack(start + 1, end)
+#
+#                 nums[start], nums[i] = nums[i], nums[start]
+#
+#     nums.sort()
+#     result = []
+#     backtrack(0, len(nums))
+#     return result
+#
+# input_list = [1, 1, 2]
+# output = unique_permutations(input_list)
+#
+# for perm in output:
+#     print(perm)
+
+
+# 5. Find all dates in a Text
+
+# def find_all_dates(text):
+#
+#     date_patterns = [
+#         r'\b\d{2}-\d{2}-\d{4}\b',  # dd-mm-yyyy
+#         r'\b\d{2}/\d{2}/\d{4}\b',  # mm/dd/yyyy
+#         r'\b\d{4}\.\d{2}\.\d{2}\b'  # yyyy.mm.dd
+#     ]
+#
+#
+#     combined_pattern = '|'.join(date_patterns)
+#
+#
+#     matches = re.findall(combined_pattern, text)
+#
+#     return matches
+#
+# text = "I was born on 23-08-1994, my friend on 08/23/1994, and another one on 1994.08.23."
+# dates = find_all_dates(text)
+# print(dates)
+
+# 6. Decode Polyline, Convert to DataFrame with Distances
+
+# def haversine(lat1, lon1, lat2, lon2):
+#     R = 6371000
+#     phi1 = math.radians(lat1)
+#     phi2 = math.radians(lat2)
+#     delta_phi = math.radians(lat2 - lat1)
+#     delta_lambda = math.radians(lon2 - lon1)
+#
+#     a = math.sin(delta_phi / 2.0) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2.0) ** 2
+#     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+#
+#     return R * c
+#
+#
+#
+# def polyline_to_dataframe(polyline_str):
+#
+#     coords = polyline.decode(polyline_str)
+#
+#     df = pd.DataFrame(coords, columns=['latitude', 'longitude'])
+#
+#     df['distance'] = 0.0
+#
+#     for i in range(1, len(df)):
+#         lat1, lon1 = df.loc[i - 1, 'latitude'], df.loc[i - 1, 'longitude']
+#         lat2, lon2 = df.loc[i, 'latitude'], df.loc[i, 'longitude']
+#         df.loc[i, 'distance'] = haversine(lat1, lon1, lat2, lon2)
+#
+#     return df
+#
+#
+#
+# polyline_str = '_p~iF~ps|U_ulLnnqC_mqNvxq`@'
+# df = polyline_to_dataframe(polyline_str)
+# print(df)
+
+# 7. Matrix Rotation and Transformation
+
+# def transform_matrix(matrix):
+#     n = len(matrix)
+#
+#     rotated_matrix = [[matrix[n - j - 1][i] for j in range(n)] for i in range(n)]
+#
+#     final_matrix = [[0] * n for _ in range(n)]
+#
+#     for i in range(n):
+#         row_sum = sum(rotated_matrix[i])
+#         for j in range(n):
+#             col_sum = sum(rotated_matrix[k][j] for k in range(n))
+#             final_matrix[i][j] = row_sum + col_sum - 2 * rotated_matrix[i][j]
+#
+#     return final_matrix
+#
+# matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+# transformed_matrix = transform_matrix(matrix)
+# for row in transformed_matrix:
+#     print(row)
+
+# 8. Time Check
+
+# def check_completeness(df):
+#     # Convert startDay, startTime, endDay, endTime to datetime objects
+#     df['start_datetime'] = pd.to_datetime(df['startDay'] + ' ' + df['startTime'], format='%A %H:%M:%S', errors='coerce')
+#     df['end_datetime'] = pd.to_datetime(df['endDay'] + ' ' + df['endTime'], format='%A %H:%M:%S', errors='coerce')
+#
+#     # Helper function to check if a day spans 24 hours
+#     def is_full_day(df_day):
+#         if df_day.empty:
+#             return False  # If there are no records for the day
+#         min_time = pd.Timestamp("00:00:00").time()
+#         max_time = pd.Timestamp("23:59:59").time()
+#         min_timestamp = df_day['start_datetime'].min().time()
+#         max_timestamp = df_day['end_datetime'].max().time()
+#         return min_timestamp == min_time and max_timestamp == max_time
+#
+#     # Define the full week set to compare against
+#     full_week = set(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
+#
+#     # Initialize an empty list to store whether each (id, id_2) is complete or not
+#     completeness_results = []
+#
+#     # Group by (id, id_2)
+#     grouped = df.groupby(['id', 'id_2'])
+#
+#     # Iterate over each group
+#     for (id_val, id_2_val), group in grouped:
+#         # Extract the day of the week for each timestamp (both start and end)
+#         group.loc[:, 'start_weekday'] = group['start_datetime'].dt.day_name()
+#         group.loc[:, 'end_weekday'] = group['end_datetime'].dt.day_name()
+#
+#         # Collect all unique days covered by the timestamps
+#         covered_days = set(group['start_weekday'].unique()).union(set(group['end_weekday'].unique()))
+#
+#         # Check if all days of the week are covered
+#         if covered_days != full_week:
+#             completeness_results.append((id_val, id_2_val, False))
+#             continue
+#
+#         # Check if for each day, the timestamps cover the full 24 hours
+#         full_coverage = True
+#         for day in full_week:
+#             day_group = group[(group['start_weekday'] == day) | (group['end_weekday'] == day)]
+#             if not is_full_day(day_group):
+#                 full_coverage = False
+#                 break
+#
+#         completeness_results.append((id_val, id_2_val, full_coverage))
+#
+#     # Convert results into a boolean series with a multi-index
+#     completeness_df = pd.DataFrame(completeness_results, columns=['id', 'id_2', 'is_complete'])
+#     completeness_df.set_index(['id', 'id_2'], inplace=True)
+#
+#     return completeness_df['is_complete']
+#
+# # Example usage
+# df = pd.read_csv('C:/Users/pravi/OneDrive/Documents/Excel Assignment/dataset-1.csv')
+# completeness_series = check_completeness(df)
+# print(completeness_series)
